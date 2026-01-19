@@ -2,7 +2,7 @@ package com.michaelverdon.pokemonteambuilder.model;
 
 import java.util.List;
 
-//@Document(collection = "teams")
+// collection = "teams"
 public class PokemonTeam {
     private String id;
     private String name;
