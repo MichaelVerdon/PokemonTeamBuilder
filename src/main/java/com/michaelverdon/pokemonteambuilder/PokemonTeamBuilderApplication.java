@@ -2,6 +2,10 @@ package com.michaelverdon.pokemonteambuilder;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.util.unit.DataSize;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @SpringBootApplication
 public class PokemonTeamBuilderApplication {
@@ -10,4 +14,14 @@ public class PokemonTeamBuilderApplication {
         SpringApplication.run(PokemonTeamBuilderApplication.class, args);
     }
 
+    @Bean
+    public WebClient webClient() {
+        final int size = (int) DataSize.ofMegabytes(16).toBytes();
+        final ExchangeStrategies strategies = ExchangeStrategies.builder()
+                .codecs(codecs -> codecs.defaultCodecs().maxInMemorySize(size))
+                .build();
+        return WebClient.builder()
+                .exchangeStrategies(strategies)
+                .build();
+    }
 }
