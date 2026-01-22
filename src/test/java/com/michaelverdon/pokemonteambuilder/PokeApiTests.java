@@ -97,5 +97,41 @@ public class PokeApiTests {
                 })
                 .verifyComplete();
     }
+
+    @Test
+    public void testGetPokemonByNameResponseStats() {
+        Mono<PokemonDto> monoPokemon = pokeApiClient.getPokemonByName("pikachu");
+
+        StepVerifier.create(monoPokemon)
+                .assertNext(pokemon -> {
+                    assertEquals("pikachu", pokemon.name().toLowerCase());
+
+                    boolean hpStatFound = pokemon.stats().stream()
+                            .anyMatch(stat -> stat.stat().name().equals("hp") && stat.base_stat() == 35);
+                    assertTrue(hpStatFound, "HP stat with value 35 should be present");
+
+                    boolean attackStatFound = pokemon.stats().stream()
+                            .anyMatch(stat -> stat.stat().name().equals("attack") && stat.base_stat() == 55);
+                    assertTrue(attackStatFound, "Attack stat with value 55 should be present");
+
+                    boolean defenseStatFound = pokemon.stats().stream()
+                            .anyMatch(stat -> stat.stat().name().equals("defense") && stat.base_stat() == 40);
+                    assertTrue(defenseStatFound, "Defense stat with value 40 should be present");
+
+                    boolean specialAttackStatFound = pokemon.stats().stream()
+                            .anyMatch(stat -> stat.stat().name().equals("special-attack") && stat.base_stat() == 50);
+                    assertTrue(specialAttackStatFound, "Special Attack stat with value 50 should be present");
+
+                    boolean specialDefenseStatFound = pokemon.stats().stream()
+                            .anyMatch(stat -> stat.stat().name().equals("special-defense") && stat.base_stat() == 50);
+                    assertTrue(specialDefenseStatFound, "Special Defence stat with value 50 should be present");
+
+                    boolean speedStatFound = pokemon.stats().stream()
+                            .anyMatch(stat -> stat.stat().name().equals("speed") && stat.base_stat() == 90);
+                    assertTrue(speedStatFound, "Speed stat with value 90 should be present");
+
+                })
+                .verifyComplete();
+    }
 }
 
