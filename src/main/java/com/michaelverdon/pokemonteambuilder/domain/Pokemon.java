@@ -13,20 +13,14 @@ public class Pokemon {
 
     public Pokemon() {}
 
-    public Pokemon(int slot, String name, List<String> typing, List<String> moveset, Map<String, Integer> stats, String spriteURL){
-        this.slot = slot;
+    public Pokemon(String name, List<String> typing, Map<String, Integer> stats, String spriteURL){
         this.name = name;
         this.typing = typing;
-        this.moveset = moveset;
         this.stats = stats;
         this.spriteURL = spriteURL;
     }
 
     // Setters
-    public void setSlot(int slot) {
-        this.slot = slot;
-    }
-
     public void setStats(Map<String, Integer> stats) {
         this.stats = stats;
     }
@@ -46,9 +40,6 @@ public class Pokemon {
     public void setSpriteURL(String spriteURL){ this.spriteURL = spriteURL; }
 
     // Getters
-    public int getSlot() {
-        return slot;
-    }
 
     public String getName() {
         return name;
@@ -71,8 +62,8 @@ public class Pokemon {
     @Override
     public String toString(){
         return String.format(
-                "Slot: %d, Pokemon: %s, Typing: %s, Moveset: %s, Stats: %s, SpriteURL: %s",
-                slot, name, typing, moveset, stats, spriteURL
+                "Pokemon: %s, Typing: %s, Moveset: %s, Stats: %s, SpriteURL: %s",
+                name, typing, moveset, stats, spriteURL
         );
     }
 
