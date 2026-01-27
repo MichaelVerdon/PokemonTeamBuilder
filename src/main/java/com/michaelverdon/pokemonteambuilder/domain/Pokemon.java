@@ -1,4 +1,4 @@
-package com.michaelverdon.pokemonteambuilder.model;
+package com.michaelverdon.pokemonteambuilder.domain;
 
 import java.util.List;
 import java.util.Map;
