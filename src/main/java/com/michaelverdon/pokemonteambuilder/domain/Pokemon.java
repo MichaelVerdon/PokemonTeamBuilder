@@ -57,7 +57,7 @@ public class Pokemon {
         return stats;
     }
 
-    public String getSpriteURL(String spriteURL){ return this.spriteURL; }
+    public String getSpriteURL(){ return this.spriteURL; }
 
     @Override
     public String toString(){
