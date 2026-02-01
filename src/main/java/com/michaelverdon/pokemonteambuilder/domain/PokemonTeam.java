@@ -1,23 +1,31 @@
 package com.michaelverdon.pokemonteambuilder.domain;
 
-import java.util.List;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-// collection = "teams"
+import java.util.List;
+import java.util.UUID;
+
+@Document(collection="PokemonTeams")
 public class PokemonTeam {
-    private String id;
+    @Id
+    private UUID id;
+    @Field(name = "name")
     private String name;
+    @Field(name = "pokemon")
     private List<Pokemon> pokemon;
 
     public PokemonTeam(){}
 
-    public PokemonTeam(String id, String name, List<Pokemon> pokemon){
+    public PokemonTeam(UUID id, String name, List<Pokemon> pokemon){
         this.id = id;
         this.name = name;
         this.pokemon = pokemon;
     }
 
     // Setters
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -30,7 +38,7 @@ public class PokemonTeam {
     }
 
     // Getters
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 

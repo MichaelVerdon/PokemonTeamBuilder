@@ -2,14 +2,19 @@ package com.michaelverdon.pokemonteambuilder;
 
 import com.michaelverdon.pokemonteambuilder.client.PokeApiClient;
 import com.michaelverdon.pokemonteambuilder.domain.Pokemon;
+import com.michaelverdon.pokemonteambuilder.domain.PokemonTeam;
 import com.michaelverdon.pokemonteambuilder.repository.PokemonTeamRepository;
 import com.michaelverdon.pokemonteambuilder.service.PokemonTeamService;
+import com.michaelverdon.pokemonteambuilder.utils.TestDataUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,6 +25,11 @@ public class PokemonTeamServiceTests {
     private PokeApiClient pokeApiClient;
     @Autowired
     private PokemonTeamRepository pokemonTeamRepository;
+
+    @BeforeEach
+    public void cleanup() {
+        pokemonTeamRepository.deleteAll();
+    }
 
     @Test
     public void pokemonTeamRepositoryInit(){
@@ -61,5 +71,19 @@ public class PokemonTeamServiceTests {
                 "speed", 100
         ));
         assertThat(pokemon.getSpriteURL()).isEqualTo("https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/6.png");
+    }
+
+    @Test
+    public void pokemonTeamRepositoryCreateTeam(){
+        PokemonTeamService pokemonTeamService = new PokemonTeamService(pokemonTeamRepository, pokeApiClient);
+
+        List<Pokemon> teamList = List.of(TestDataUtils.createPokemon(), TestDataUtils.createUpdatedPokemon());
+        PokemonTeam team = new PokemonTeam(UUID.randomUUID(), "Test-Team", teamList);
+
+        PokemonTeam createdTeam = pokemonTeamService.createPokemonTeam(team);
+        assertThat(createdTeam).isNotNull();
+        assertThat(createdTeam.getId()).isNotNull();
+        assertThat(createdTeam.getName()).isEqualTo("Test-Team");
+        assertThat(createdTeam.getPokemon()).hasSize(2);
     }
 }
