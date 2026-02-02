@@ -6,6 +6,7 @@ import com.michaelverdon.pokemonteambuilder.domain.PokemonTeam;
 import com.michaelverdon.pokemonteambuilder.repository.PokemonTeamRepository;
 import com.michaelverdon.pokemonteambuilder.service.PokemonTeamService;
 import com.michaelverdon.pokemonteambuilder.utils.TestDataUtils;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.context.annotation.Import;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -86,4 +88,82 @@ public class PokemonTeamServiceTests {
         assertThat(createdTeam.getName()).isEqualTo("Test-Team");
         assertThat(createdTeam.getPokemon()).hasSize(2);
     }
+
+    @Test
+    public void pokemonTeamRepositoryGetByName(){
+        PokemonTeamService pokemonTeamService = new PokemonTeamService(pokemonTeamRepository, pokeApiClient);
+
+        List<Pokemon> teamList = List.of(TestDataUtils.createPokemon(), TestDataUtils.createUpdatedPokemon());
+        PokemonTeam team = new PokemonTeam(UUID.randomUUID(), "Test-Team", teamList);
+        pokemonTeamService.createPokemonTeam(team);
+        Optional<PokemonTeam> fetchedTeam = pokemonTeamService.getPokemonTeamByName("Test-Team");
+
+        assertThat(fetchedTeam).isPresent();
+        assertThat(fetchedTeam).isNotNull();
+        assertThat(fetchedTeam.get().getName()).isEqualTo("Test-Team");
+        assertThat(fetchedTeam.get().getPokemon().size()).isEqualTo(2);
+    }
+
+    @Test
+    public void pokemonTeamRepositoryGetAllTeams(){
+        PokemonTeamService pokemonTeamService = new PokemonTeamService(pokemonTeamRepository, pokeApiClient);
+
+        List<Pokemon> teamList = List.of(TestDataUtils.createPokemon(), TestDataUtils.createUpdatedPokemon());
+        PokemonTeam team = new PokemonTeam(UUID.randomUUID(), "Test-Team-1", teamList);
+        PokemonTeam team2 = new PokemonTeam(UUID.randomUUID(), "Test-Team-2", teamList);
+        pokemonTeamService.createPokemonTeam(team);
+        pokemonTeamService.createPokemonTeam(team2);
+
+        List<PokemonTeam> pokemonTeams = pokemonTeamService.getAllPokemonTeams();
+
+        assertThat(pokemonTeams.size()).isEqualTo(2);
+        assertThat(pokemonTeams.getFirst().getName()).isEqualTo("Test-Team-1");
+        assertThat(pokemonTeams.get(1).getName()).isEqualTo("Test-Team-2");
+    }
+
+    @Test
+    public void pokemonTeamRepositoryDeleteAll(){
+        PokemonTeamService pokemonTeamService = new PokemonTeamService(pokemonTeamRepository, pokeApiClient);
+
+        List<Pokemon> teamList = List.of(TestDataUtils.createPokemon(), TestDataUtils.createUpdatedPokemon());
+        PokemonTeam team = new PokemonTeam(UUID.randomUUID(), "Test-Team-1", teamList);
+        PokemonTeam team2 = new PokemonTeam(UUID.randomUUID(), "Test-Team-2", teamList);
+        pokemonTeamService.createPokemonTeam(team);
+        pokemonTeamService.createPokemonTeam(team2);
+
+        List<PokemonTeam> pokemonTeams = pokemonTeamService.getAllPokemonTeams();
+
+        assertThat(pokemonTeams.size()).isEqualTo(2);
+
+        pokemonTeamService.deleteAllTeams();
+        pokemonTeams = pokemonTeamService.getAllPokemonTeams();
+
+        assertThat(pokemonTeams.size()).isEqualTo(0);
+    }
+
+    @Test
+    public void pokemonTeamRepositoryUpdateTeam(){
+        PokemonTeamService pokemonTeamService = new PokemonTeamService(pokemonTeamRepository, pokeApiClient);
+
+        List<Pokemon> teamList = List.of(TestDataUtils.createPokemon());
+        UUID teamId = UUID.randomUUID();
+        PokemonTeam team = new PokemonTeam(teamId, "Test-Team-1", teamList);  // Pass null, let MongoDB generate ID
+        PokemonTeam createdTeam = pokemonTeamService.createPokemonTeam(team);
+
+        List<PokemonTeam> pokemonTeams = pokemonTeamService.getAllPokemonTeams();
+        assertThat(pokemonTeams).hasSize(1);
+        assertThat(pokemonTeams.getFirst().getPokemon().getFirst().getMoveset())
+                .isEqualTo(List.of("thunderbolt", "quick-attack"));
+
+        System.out.println(teamId.toString());
+        teamList = List.of(TestDataUtils.createUpdatedPokemon());
+        PokemonTeam updatedTeam = new PokemonTeam(teamId, "Test-Team-1", teamList);
+        pokemonTeamService.updatePokemonTeam(updatedTeam);
+
+        pokemonTeams = pokemonTeamService.getAllPokemonTeams();
+        assertThat(pokemonTeams).hasSize(1);
+        assertThat(pokemonTeams.getFirst().getPokemon().getFirst().getMoveset())
+                .isEqualTo(List.of("thunder", "thunderbolt"));
+    }
+
 }

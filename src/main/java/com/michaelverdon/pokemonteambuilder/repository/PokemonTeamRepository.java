@@ -5,9 +5,10 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface PokemonTeamRepository extends MongoRepository<PokemonTeam, String> {
+public interface PokemonTeamRepository extends MongoRepository<PokemonTeam, UUID> {
     Optional<PokemonTeam> findByName(String name);
     void deleteByName(String name);
 }
