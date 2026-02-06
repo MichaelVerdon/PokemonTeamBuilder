@@ -58,7 +58,7 @@ public class PokemonTeamService {
         repository.deleteAll();
     }
 
-    public void updatePokemonTeam(PokemonTeam pokemonTeam) {
+    public PokemonTeam updatePokemonTeam(PokemonTeam pokemonTeam) {
         if (pokemonTeam.getId() == null) {
             throw new TeamNotFoundException("Cannot update non-existent team");
         }
@@ -66,6 +66,7 @@ public class PokemonTeamService {
         repository.findById(pokemonTeam.getId())
                 .orElseThrow(() -> new TeamNotFoundException("Team with ID " + pokemonTeam.getId() + " not found"));
         repository.save(pokemonTeam);
+        return pokemonTeam;
     }
 
     // Helper methods
