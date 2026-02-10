@@ -10,5 +10,4 @@ import java.util.UUID;
 @Repository
 public interface PokemonTeamRepository extends MongoRepository<PokemonTeam, UUID> {
     Optional<PokemonTeam> findByName(String name);
-    void deleteByName(String name);
 }

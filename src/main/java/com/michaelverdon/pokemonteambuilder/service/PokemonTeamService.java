@@ -50,8 +50,8 @@ public class PokemonTeamService {
         return repository.findAll();
     }
 
-    public void deletePokemonTeam(String name) {
-        repository.deleteByName(name);
+    public void deleteByTeamId(UUID id) {
+        repository.deleteById(id);
     }
 
     public void deleteAllTeams() {
@@ -67,6 +67,10 @@ public class PokemonTeamService {
                 .orElseThrow(() -> new TeamNotFoundException("Team with ID " + pokemonTeam.getId() + " not found"));
         repository.save(pokemonTeam);
         return pokemonTeam;
+    }
+
+    public Optional<PokemonTeam> getPokemonTeamById(UUID id){
+        return repository.findById(id);
     }
 
     // Helper methods
