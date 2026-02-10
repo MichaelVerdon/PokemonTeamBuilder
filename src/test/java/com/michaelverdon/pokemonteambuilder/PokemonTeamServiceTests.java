@@ -6,12 +6,10 @@ import com.michaelverdon.pokemonteambuilder.domain.PokemonTeam;
 import com.michaelverdon.pokemonteambuilder.repository.PokemonTeamRepository;
 import com.michaelverdon.pokemonteambuilder.service.PokemonTeamService;
 import com.michaelverdon.pokemonteambuilder.utils.TestDataUtils;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 
 import java.util.List;
 import java.util.Map;
@@ -164,6 +162,42 @@ public class PokemonTeamServiceTests {
         assertThat(pokemonTeams).hasSize(1);
         assertThat(pokemonTeams.getFirst().getPokemon().getFirst().getMoveset())
                 .isEqualTo(List.of("thunder", "thunderbolt"));
+    }
+
+    @Test
+    public void pokemonTeamRepositoryDeleteById(){
+        PokemonTeamService pokemonTeamService = new PokemonTeamService(pokemonTeamRepository, pokeApiClient);
+
+        List<Pokemon> teamList = List.of(TestDataUtils.createPokemon());
+        UUID teamId = UUID.randomUUID();
+        PokemonTeam team = new PokemonTeam(teamId, "Test-Team-1", teamList);  // Pass null, let MongoDB generate ID
+        PokemonTeam createdTeam = pokemonTeamService.createPokemonTeam(team);
+
+        List<PokemonTeam> pokemonTeams = pokemonTeamService.getAllPokemonTeams();
+
+        assertThat(pokemonTeams).hasSize(1);
+
+        pokemonTeamService.deleteByTeamId(teamId);
+
+        pokemonTeams = pokemonTeamService.getAllPokemonTeams();
+
+        assertThat(pokemonTeams).hasSize(0);
+    }
+
+    @Test
+    public void pokemonTeamRepositoryGetById(){
+        PokemonTeamService pokemonTeamService = new PokemonTeamService(pokemonTeamRepository, pokeApiClient);
+
+        List<Pokemon> teamList = List.of(TestDataUtils.createPokemon(), TestDataUtils.createUpdatedPokemon());
+        UUID teamId = UUID.randomUUID();
+        PokemonTeam team = new PokemonTeam(teamId, "Test-Team", teamList);
+        pokemonTeamService.createPokemonTeam(team);
+        Optional<PokemonTeam> fetchedTeam = pokemonTeamService.getPokemonTeamById(teamId);
+
+        assertThat(fetchedTeam).isPresent();
+        assertThat(fetchedTeam).isNotNull();
+        assertThat(fetchedTeam.get().getName()).isEqualTo("Test-Team");
+        assertThat(fetchedTeam.get().getPokemon().size()).isEqualTo(2);
     }
 
 }

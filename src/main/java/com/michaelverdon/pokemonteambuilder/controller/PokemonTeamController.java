@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@RestController
+@RequestMapping("/pokemonteams")
 public class PokemonTeamController {
 
     private final PokemonTeamService pokemonTeamService;
@@ -18,13 +20,13 @@ public class PokemonTeamController {
         this.pokemonTeamService = pokemonTeamService;
     }
 
-    @GetMapping
+    @GetMapping("/team/all")
     public ResponseEntity<List<PokemonTeam>> getAllTeams(){
         List<PokemonTeam> teams = pokemonTeamService.getAllPokemonTeams();
         return ResponseEntity.ok(teams);
     }
 
-    @GetMapping("team/search?={name}")
+    @GetMapping("/team/search/{name}")
     public ResponseEntity<Optional<PokemonTeam>> getPokemonTeamByName(@PathVariable String name){
         Optional<PokemonTeam> team = pokemonTeamService.getPokemonTeamByName(name);
         return ResponseEntity.ok(team);
@@ -33,20 +35,20 @@ public class PokemonTeamController {
     @PostMapping
     public ResponseEntity<PokemonTeam> createPokemonTeam(@RequestBody PokemonTeam team){
         PokemonTeam createdTeam = pokemonTeamService.createPokemonTeam(team);
-        return ResponseEntity.status(HttpStatus.CREATED).body(team);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdTeam);
     }
 
-    @PutMapping("team/id?={id}")
+    @PutMapping("/team/{id}")
     public ResponseEntity<PokemonTeam> updatePokemonTeam(@PathVariable UUID id, @RequestBody PokemonTeam team){
         team.setId(id);
         PokemonTeam updatedTeam = pokemonTeamService.updatePokemonTeam(team);
-        return ResponseEntity.ok(team);
+        return ResponseEntity.ok(updatedTeam);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity.BodyBuilder deletePokemonTeam(@PathVariable UUID id){
+    public ResponseEntity<Void> deletePokemonTeam(@PathVariable UUID id){
         pokemonTeamService.deleteByTeamId(id);
-        return ResponseEntity.status(HttpStatus.OK);
+        return ResponseEntity.noContent().build();
     }
 
 }
